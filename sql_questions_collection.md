@@ -1,6 +1,6 @@
 <!-- MarkdownTOC -->
 - [Active User I](#Active_User-i)
-  - [Task: Find the month-over-month percentage change for monthly active users (MAU).](#Find the month-over-month percentage change for monthly active users (MAU))
+  - [Task: Find the month-over-month percentage change for monthly active users (MAU)](#Task: Find the month-over-month percentage change for monthly active users (MAU))
 - [Active_User II](#Active_User-ii)
 
 
@@ -38,7 +38,6 @@ INSERT INTO logins  VALUES (5, '2018-03-01');
 
 
 ### Task: Find the month-over-month percentage change for monthly active users (MAU).
-```sql
 -- solution
 
 with cte as (
@@ -47,9 +46,10 @@ with cte as (
 
 select round(100.0 * (a.id_count - b.id_count)/b.id_count, 2) as percent_change, a.Month as cur_month, b.Month as prev_month
 from cte a join cte b on a.Month = b.Month + interval '1 month';
+
 ```
 
-### Task: Write a query that gets the number of retained users per month. In this case, retention for a given month is defined as the number of users who logged in that month who also logged in the immediately previous month.
+### Task: Write a query that gets the number of retained users per month. In this case, retention for a given month is defined as the number of users who logged in that month who also logged in the immediately previous month
 
 -- or you can do
 
