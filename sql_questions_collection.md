@@ -1,3 +1,21 @@
+<!-- MarkdownTOC -->
+- [Active User I](#Active_User-i)
+  - [Task: Find the month-over-month percentage change for monthly active users (MAU).](#Find the month-over-month percentage change for monthly active users (MAU))
+- [Active_User II](#Active_User-ii)
+
+
+<!-- /MarkdownTOC -->
+
+### Active User I
+| user_id | date |
+|---------|------------|
+| 1 | 2018-01-01 |
+| 4 | 2018-01-01 |
+| 3 | 2018-01-01 |
+| 1 | 2018-07-02 |
+| ... | ... |
+|5 | 2018-03-01 |
+
 ``` sql
 DROP TABLE IF EXISTS logins;
 CREATE TABLE logins (
@@ -16,10 +34,12 @@ INSERT INTO logins  VALUES (3, '2018-03-01');
 INSERT INTO logins  VALUES (2, '2018-03-01');
 INSERT INTO logins  VALUES (4, '2018-03-01');
 INSERT INTO logins  VALUES (5, '2018-03-01');
+```
 
-/*
-Task: Find the month-over-month percentage change for monthly active users (MAU).
-*/
+
+### Task: Find the month-over-month percentage change for monthly active users (MAU).
+```sql
+-- solution
 
 with cte as (
     select count(distinct user_id) as id_count, Date_trunc('Month', date) as Month
@@ -27,8 +47,11 @@ with cte as (
 
 select round(100.0 * (a.id_count - b.id_count)/b.id_count, 2) as percent_change, a.Month as cur_month, b.Month as prev_month
 from cte a join cte b on a.Month = b.Month + interval '1 month';
+```
 
-Task: Write a query that gets the number of retained users per month. In this case, retention for a given month is defined as the number of users who logged in that month who also logged in the immediately previous month.
+### Task: Write a query that gets the number of retained users per month. In this case, retention for a given month is defined as the number of users who logged in that month who also logged in the immediately previous month.
+
+-- or you can do
 
 with cte as(
     select user_id, date_trunc( 'Month', date) as Month
@@ -36,9 +59,11 @@ with cte as(
 select count(distinct a.user_id), a.Month 
     from cte a, cte b where a.user_id = b.user_id and a.Month = b.Month + interval '1 month'
     group by a.Month;
+```
 
-Task: Now we’ll take retention and turn it on its head: Write a query to find many
-users last month did not come back this month. i.e. the number of churned users.
+### Task: Now we’ll take retention and turn it on its head: Write a query to find many users last month did not come back this month. i.e. the number of churned users.
+
+```sql
  SELECT
     DATE_TRUNC('month', b.date) month_timestamp,
     COUNT(DISTINCT b.user_id) churned_users
@@ -52,7 +77,10 @@ users last month did not come back this month. i.e. the number of churned users.
         a.user_id IS NULL
     GROUP BY DATE_TRUNC('month', b.date)
 
-Task: Create a table that contains the number of reactivated users per month.
+```
+
+### Task: Create a table that contains the number of reactivated users per month.
+```sql
 SELECT
     DATE_TRUNC('month', a.date) as month_timestamp,
     COUNT(DISTINCT a.user_id) reactivated_users,
