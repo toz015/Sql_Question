@@ -1,6 +1,6 @@
 <!-- MarkdownTOC -->
 - [Active User I](#Active_User-i)
-  - [Find the month over month percentage change for monthly active users (MAU)](Find the month-over-month percentage change for monthly active users (MAU))
+  - [Find the month over month percentage change for monthly active users (MAU)](Find-the-month-over-month-percentage-change-for-monthly-active-users-MAU)
 - [Active_User II](#Active_User-ii)
   
 
