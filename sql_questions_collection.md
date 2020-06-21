@@ -15,8 +15,8 @@
   - [Write a query to get the response time per email (id) sent to zach@g.com](#Write-a-query-to-get-the-response-time-per-email-id-sent-to-zach@g.com)
 - [Window Function Pratice Problem](#Window-Function-Practice-Problem)
   - [Get the ID with the highest value](#Get-the-ID-with-the-highest-value)
-  - [Average and rank with a window function (multi-part)](#Average-and-rank-with-a-window-function-multi-part))
-  - [Adds a column with the rank of each employee based on their salary within their department](#Adds-a-column-with-the-rank-of-each-employee-based-on-their-salary-within-their-department-where-the-employee-with-the-highest-salary-gets-the-rank-of-1)
+  - [Average and rank with a window function (multi-part)](#Average-and-rank-with-a-window-function-multi-part)
+  - [Adds a column with the rank of each employee based on their salary within their department，where the employee with the highest salary gets the rank of 1](#Adds-a-column-with-the-rank-of-each-employee-based-on-their-salary-within-their-department-where-the-employee-with-the-highest-salary-gets-the-rank-of-1)
 - [Histograms](#Histograms)
     
 
