@@ -369,7 +369,7 @@ select t1.depname, t1.empno, t1.salary, t2.avg_salary
     where t1.depname = t2.depname;
 ```
 
-#### Adds a column with the rank of each employee based on their salary within their department，where the employee with the highest salary gets the rank of 1
+#### Adds a column with the rank of each employee based on their salary within their department, where the employee with the highest salary gets the rank of 1
 |depname | empno | salary | salary_rank |
 |-----------|-------|--------|-------------|
 |develop | 8 | 6000 | 1 |
