@@ -8,11 +8,11 @@
 - [Cumulative Sums](#Cumulative-Sums)
   - [Write a query to get cumulative cash flow for each day](#Write-a-query-to-get-cumulative-cash-flow-for-each-day-such-that-we-end-up-with-a-table-in-the-form-below)
 - [Tree Structure Labeling](#Tree-Structure-Labeling)
-  - [Write SQL such that we label each node as a “leaf”, “inner” or “Root” node](#Write-SQL-such-that-we-label-each-node-as-a--leaf---inner--or--Root--node)
+  - [Write SQL such that we label each node as a “leaf”, “inner” or “Root” node](#Write-SQL-such-that-we-label-each-node-as-a-leaf-inner-or-Root--node)
 - [Rolling Averages](#Rolling-Averages)
-  - [Write a query to get 7-day rolling (preceding) average of daily sign ups](#Write-a-query-to-get-7--day-rolling--preceding--average-of-daily-sign-ups)
+  - [Write a query to get 7-day rolling (preceding) average of daily sign ups](#Write-a-query-to-get-7-day-rolling-preceding-average-of-daily-sign-ups)
 - [Multiple Join Conditions](#Multiple-Join-Conditions)
-  - [Write a query to get the response time per email (id) sent to zach@g.com](#Write-a-query-to-get-the-response-time-per-email--id--sent-to-zach@g.com)
+  - [Write a query to get the response time per email (id) sent to zach@g.com](#Write-a-query-to-get-the-response-time-per-email-id-sent-to-zach@g.com)
 
 
 <!-- /MarkdownTOC -->
@@ -253,24 +253,17 @@ INSERT INTO emails VALUES (8, 'Table', 'thomas@g.com', 'zach@g.com','2018-01-07 
 ```
 #### Write a query to get the response time per email (id) sent to zach@g.com
 Do not include ids that did not receive a response from zach@g.com. Assume each email thread has a unique subject. Keep in mind a thread may have multiple responses back-and-forth between zach@g.com and another email address.
-| id | subject | from | to |
-timestamp |
-|----|----------|--------------|--------------|------------
----------|
-| 1 | Yosemite | zach@g.com | thomas@g.com | 2018-01-02
-12:45:03 |
-| 2 | Big Sur | sarah@g.com | thomas@g.com | 2018-01-02
-16:30:01 |
-| 3 | Yosemite | thomas@g.com | zach@g.com | 2018-01-02
-16:35:04 |
-| 4 | Running | jill@g.com | zach@g.com | 2018-01-03
-08:12:45 |
-| 5 | Yosemite | zach@g.com | thomas@g.com | 2018-01-03
-14:02:01 |
-| 6 | Yosemite | thomas@g.com | zach@g.com | 2018-01-03
-15:01:05 |
-| .. | .. | .. | .. |
-.. |
+
+| id | subject | from | to | timestamp |
+|----|----------|--------------|--------------|---------------------|
+| 1 | Yosemite | zach@g.com | thomas@g.com | 2018-01-02 12:45:03 |
+| 2 | Big Sur | sarah@g.com | thomas@g.com | 2018-01-02 16:30:01 |
+| 3 | Yosemite | thomas@g.com | zach@g.com | 2018-01-02 16:35:04 |
+| 4 | Running | jill@g.com | zach@g.com | 2018-01-03 08:12:45 |
+| 5 | Yosemite | zach@g.com | thomas@g.com | 2018-01-03 14:02:01 |
+| 6 | Yosemite | thomas@g.com | zach@g.com | 2018-01-03 15:01:05 |
+| .. | .. | .. | .. | .. |
+
 -- solution
 ```sql
 select a.id,
