@@ -8,7 +8,7 @@
 - [Cumulative Sums](#Cumulative-Sums)
   - [Write a query to get cumulative cash flow for each day](#Write-a-query-to-get-cumulative-cash-flow-for-each-day-such-that-we-end-up-with-a-table-in-the-form-below)
 - [Tree Structure Labeling](#Tree-Structure-Labeling)
-  - [Write SQL such that we label each node as a “leaf”, “inner” or “Root” node](#Write-SQL-such-that-we-label-each-node-as-a-leaf-inner-or-Root--node)
+  - [Write SQL such that we label each node as a “leaf”, “inner” or “root” node](#Write-SQL-such-that-we-label-each-node-as-a-leaf-inner-or-root--node)
 - [Rolling Averages](#Rolling-Averages)
   - [Write a query to get 7-day rolling (preceding) average of daily sign ups](#Write-a-query-to-get-7-day-rolling-preceding-average-of-daily-sign-ups)
 - [Multiple Join Conditions](#Multiple-Join-Conditions)
