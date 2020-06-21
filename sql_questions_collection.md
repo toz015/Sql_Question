@@ -1,18 +1,18 @@
 <!-- MarkdownTOC -->
 - [Active User](#Active-User)
-  - [Find the month over month percentage change for monthly active users (MAU)](Find-the-month-over-month-percentage-change-for-monthly-active-users-MAU)
-  - [Write a query that gets the number of retained users per month](Write-a-query-that-gets-the-number-of-retained-users-per-month)
-  - [Write a query to find many users last month did not come back this month](Write-a-query-to-find-many-users-last-month-did-not-come-back-this-month)
-  - [Create a table that contains the number of reactivated users per month](Create-a-table-that-contains-the-number-of-reactivated-users-per-month)
+  - [Find the month over month percentage change for monthly active users (MAU)](#Find-the-month-over-month-percentage-change-for-monthly-active-users-MAU)
+  - [Write a query that gets the number of retained users per month](#Write-a-query-that-gets-the-number-of-retained-users-per-month)
+  - [Write a query to find many users last month did not come back this month](#Write-a-query-to-find-many-users-last-month-did-not-come-back-this-month)
+  - [Create a table that contains the number of reactivated users per month](#Create-a-table-that-contains-the-number-of-reactivated-users-per-month)
   
 - [Cumulative Sums](#Cumulative-Sums)
-  - [Write a query to get cumulative cash flow for each day](Write-a-query-to-get-cumulative-cash-flow-for-each-day-such-that-we-end-up-with-a-table-in-the-form-below)
+  - [Write a query to get cumulative cash flow for each day](#Write-a-query-to-get-cumulative-cash-flow-for-each-day-such-that-we-end-up-with-a-table-in-the-form-below)
 - [Tree Structure Labeling](#Tree-Structure-Labeling)
-  - [Write SQL such that we label each node as a “leaf”, “inner” or “Root” node](Write-SQL-such-that-we-label-each-node-as-a-leaf-inner-or-Root-node)
+  - [Write SQL such that we label each node as a “leaf”, “inner” or “Root” node](#Write-SQL-such-that-we-label-each-node-as-a--leaf---inner--or--Root--node)
 - [Rolling Averages](#Rolling-Averages)
-  - [Write a query to get 7-day rolling (preceding) average of daily sign ups](Write-a-query-to-get-7-day-rolling-preceding-average-of-daily-sign-ups)
+  - [Write a query to get 7-day rolling (preceding) average of daily sign ups](#Write-a-query-to-get-7--day-rolling--preceding--average-of-daily-sign-ups)
 - [Multiple Join Conditions](#Multiple-Join-Conditions)
-  - [Write a query to get the response time per email (id) sent to zach@g.com](Write-a-query-to-get-the-response-time-per-email-id-sent-to-zach@g.com)
+  - [Write a query to get the response time per email (id) sent to zach@g.com](#Write-a-query-to-get-the-response-time-per-email--id--sent-to-zach@g.com)
 
 
 <!-- /MarkdownTOC -->
