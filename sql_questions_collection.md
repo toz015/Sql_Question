@@ -207,17 +207,17 @@ Note: there are different ways to compute rolling/moving averages. Here we'll us
 
 
 ```sql
-\*
+
 -- solution 1
-*\
+
 select t1.date, t1.sign_ups, (sum(t2.sign_ups) - sum(t3.sign_ups)) / 6
     from sign_ups t1, sign_ups t2, sign_ups t3
     where t1.date >= t2.date and t1.date = t3.date + interval '6 day'
     group by t1.date, t1.sign_ups
     order by date_trunc('day', t1.date);
-\*
+
 -- solution 2
-*\
+
 SELECT
     a.date,
     AVG(b.sign_ups) average_sign_ups
@@ -231,8 +231,6 @@ GROUP BY  a.date
 ```
 ### Multiple Join Conditions
 **Context:** Say we have a table emails that includes emails sent to and from zach@g.com:
-#### Write a query to get the response time per email (id) sent to zach@g.com
-Do not include ids that did not receive a response from zach@g.com. Assume each email thread has a unique subject. Keep in mind a thread may have multiple responses back-and-forth between zach@g.com and another email address.
 ```sql
 DROP TABLE IF EXISTS emails;
 CREATE TABLE emails(
@@ -252,6 +250,9 @@ INSERT INTO emails VALUES (6, 'Yosemite', 'thomas@g.com', 'zach@g.com','2018-01-
 INSERT INTO emails VALUES (7, 'Table', 'zach@g.com', 'thomas@g.com','2018-01-07 17:01:05');
 INSERT INTO emails VALUES (8, 'Table', 'thomas@g.com', 'zach@g.com','2018-01-07 16:01:05');
 ```
+#### Write a query to get the response time per email (id) sent to zach@g.com
+Do not include ids that did not receive a response from zach@g.com. Assume each email thread has a unique subject. Keep in mind a thread may have multiple responses back-and-forth between zach@g.com and another email address.
+
 -- solution
 ```sql
 select a.id,
