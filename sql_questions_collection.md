@@ -158,6 +158,14 @@ select t1.date, t1.cash_flow, sum(t2.cash_flow)
 ### Tree Structure Labeling
 
 **Context:**  Say you have a table tree with a column of nodes and a column corresponding parent nodes
+
+|node | label |
+|-----|-----|
+|1 | Leaf |
+|2 | Inner |
+|3 | Inner |
+|4 | Leaf |
+|5 | Root |
 ```sql
 DROP TABLE IF EXISTS TREE;
 
@@ -175,13 +183,6 @@ INSERT INTO TREE  VALUES (5, NULL);
 ```
 #### Write SQL such that we label each node as a “leaf”, “inner” or “Root” node
 
-|node | label |
-|-----|-----|
-|1 | Leaf |
-|2 | Inner |
-|3 | Inner |
-|4 | Leaf |
-|5 | Root |
 ```sql
 select a.node,
        (case 
@@ -252,7 +253,24 @@ INSERT INTO emails VALUES (8, 'Table', 'thomas@g.com', 'zach@g.com','2018-01-07 
 ```
 #### Write a query to get the response time per email (id) sent to zach@g.com
 Do not include ids that did not receive a response from zach@g.com. Assume each email thread has a unique subject. Keep in mind a thread may have multiple responses back-and-forth between zach@g.com and another email address.
-
+| id | subject | from | to |
+timestamp |
+|----|----------|--------------|--------------|------------
+---------|
+| 1 | Yosemite | zach@g.com | thomas@g.com | 2018-01-02
+12:45:03 |
+| 2 | Big Sur | sarah@g.com | thomas@g.com | 2018-01-02
+16:30:01 |
+| 3 | Yosemite | thomas@g.com | zach@g.com | 2018-01-02
+16:35:04 |
+| 4 | Running | jill@g.com | zach@g.com | 2018-01-03
+08:12:45 |
+| 5 | Yosemite | zach@g.com | thomas@g.com | 2018-01-03
+14:02:01 |
+| 6 | Yosemite | thomas@g.com | zach@g.com | 2018-01-03
+15:01:05 |
+| .. | .. | .. | .. |
+.. |
 -- solution
 ```sql
 select a.id,
