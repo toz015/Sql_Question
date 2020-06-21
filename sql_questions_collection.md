@@ -1,13 +1,17 @@
 <!-- MarkdownTOC -->
-- [Active User I](#Active_User-i)
+- [Active User](#Active User)
   - [Find the month over month percentage change for monthly active users (MAU)](Find-the-month-over-month-percentage-change-for-monthly-active-users-MAU)
-- [Active_User II](#Active_User-ii)
-  
-
+  - [Write a query that gets the number of retained users per month](Write-a-query-that-gets-the-number-of-retained-users-per-month)
+  - [Write a query to find many users last month did not come back this month](Write-a-query-to-find-many-users-last-month-did-not-come-back-this-month)
+  -[Create a table that contains the number of reactivated users per month](Create-a-table-that-contains-the-number-of-reactivated-users-per-month)
+-[Cumulative Sums](#Cumulative Sums)
+  -[Write a query to get cumulative cash flow for each day](Write-a-query-to-get-cumulative-cash-flow-for-each-day-such-that-we-end-up-with-a-table-in-the-form-below)
+-[Tree Structure Labeling](#Tree Structure Labeling)
+  -[Write SQL such that we label each node as a “leaf”, “inner” or “Root” node](Write-SQL-such-that-we-label-each-node-as-a-leaf-inner-or-Root-node)
 
 <!-- /MarkdownTOC -->
 
-### Active User I
+### Active User 
 | user_id | date |
 |---------|------------|
 | 1 | 2018-01-01 |
@@ -38,9 +42,9 @@ INSERT INTO logins  VALUES (5, '2018-03-01');
 ```
 
 
-### Task: Find the month-over-month percentage change for monthly active users (MAU).
+### Find the month-over-month percentage change for monthly active users (MAU)
 -- solution
-
+```sql
 with cte as (
     select count(distinct user_id) as id_count, Date_trunc('Month', date) as Month
     from logins group by Date_trunc('Month', date))
@@ -50,9 +54,11 @@ from cte a join cte b on a.Month = b.Month + interval '1 month';
 
 ```
 
-### Task: Write a query that gets the number of retained users per month. In this case, retention for a given month is defined as the number of users who logged in that month who also logged in the immediately previous month
+### Write a query that gets the number of retained users per month
+In this case, retention for a given month is defined as the number of users who logged in that month who also logged in the immediately previous month
+-- solution
 
--- or you can do
+```sql
 
 with cte as(
     select user_id, date_trunc( 'Month', date) as Month
@@ -62,8 +68,9 @@ select count(distinct a.user_id), a.Month
     group by a.Month;
 ```
 
-### Task: Now we’ll take retention and turn it on its head: Write a query to find many users last month did not come back this month. i.e. the number of churned users.
-
+### Write a query to find many users last month did not come back this month
+i.e. the number of churned users.
+-- solution
 ```sql
  SELECT
     DATE_TRUNC('month', b.date) month_timestamp,
@@ -80,7 +87,8 @@ select count(distinct a.user_id), a.Month
 
 ```
 
-### Task: Create a table that contains the number of reactivated users per month.
+### Create a table that contains the number of reactivated users per month
+-- solution
 ```sql
 SELECT
     DATE_TRUNC('month', a.date) as month_timestamp,
@@ -96,13 +104,20 @@ SELECT
     HAVING
            DATE_TRUNC('month', a.date) > MAX(DATE_TRUNC('month', b.date)) + interval '1 month'
 
+```
 
+### Cumulative Sums
+**Context :** Say we have a table transactions in the form:
+| date | cash_flow |
+|------------|-----------|
+| 2018-01-01 | -1000 |
+| 2018-01-02 | -100 |
+| 2018-01-03 | 50 |
+| ... | ... |
 
-=====================================================================================
-Cumulative Sums
+Where cash_flow is the revenues minus costs for each day
 
-Task: Write a query to get cumulative cash flow for each day such that we end up with a table in the form below
-
+```sql
 DROP TABLE IF EXISTS transactions;
 CREATE TABLE transactions (
     cash_flow           int,
@@ -119,21 +134,25 @@ INSERT INTO transactions VALUES (7, '2018-01-07');
 INSERT INTO transactions VALUES (8, '2018-01-08');
 INSERT INTO transactions VALUES (9, '2018-01-09');
 INSERT INTO transactions VALUES (10, '2018-01-10');
+```
+### Write a query to get cumulative cash flow for each day such that we end up with a table in the form below
+
+-- sol
+```sql
 select t1.date, t1.cash_flow, sum(t2.cash_flow)
     from transactions t1, transactions t2
     where t1.date >= t2.date
     group by t1.date, t1.cash_flow
     order by date_trunc('day', t1.date)
 
+```
 
 
 
-=====================================================================================
+### Tree Structure Labeling
 
-
-
-
-
+**Context :** Say you have a table tree with a column of nodes and a column corresponding parent nodes
+```sql
 DROP TABLE IF EXISTS TREE;
 
 CREATE TABLE TREE(
@@ -147,8 +166,16 @@ INSERT INTO TREE  VALUES (2, 5);
 INSERT INTO TREE  VALUES (3, 5);
 INSERT INTO TREE  VALUES (4, 3);
 INSERT INTO TREE  VALUES (5, NULL);
+```
+### Write SQL such that we label each node as a “leaf”, “inner” or “Root” node
 
-Task: Write SQL such that we label each node as a “leaf”, “inner” or “Root” node, such that for the nodes above we get:
+node label
+1 Leaf
+2 Inner
+3 Inner
+4 Leaf
+5 Root
+```sql
 select a.node,
        (case 
             when a.parent is NULL and b.parent is null then 'Root'
@@ -156,6 +183,7 @@ select a.node,
             else 'Inner'
         end) as Label
      from tree a full join tree b on a.parent = b.node where a.node is not null
+```
 
 =====================================================================================
 #5: Rolling Averages 
