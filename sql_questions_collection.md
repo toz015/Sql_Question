@@ -13,7 +13,12 @@
   - [Write a query to get 7-day rolling (preceding) average of daily sign ups](#Write-a-query-to-get-7-day-rolling-preceding-average-of-daily-sign-ups)
 - [Multiple Join Conditions](#Multiple-Join-Conditions)
   - [Write a query to get the response time per email (id) sent to zach@g.com](#Write-a-query-to-get-the-response-time-per-email-id-sent-to-zach@g.com)
-
+- [Window Function Pratice Problem](#Window-Function-Practice-Problem)
+  - [Get the ID with the highest value](#Get-the-ID-with-the-highest-value)
+  - [Average and rank with a window function (multi-part)](#Average-and-rank-with-a-window-function-multi-part))
+  - [Adds a column with the rank of each employee based on their salary within their department](#Adds-a-column-with-the-rank-of-each-employee-based-on-their-salary-within-their-department-where-the-employee-with-the-highest-salary-gets-the-rank-of-1)
+- [Histograms](#Histograms)
+    
 
 <!-- /MarkdownTOC -->
 
@@ -278,3 +283,120 @@ select a.id,
        group by 
            a.id, a.email_timestamp
 ```
+### Window Function Practice Problem
+
+**Context:** Say we have a table salaries with data on employee salary and
+department in the following format:
+
+|depname | empno | salary |
+|-----------|-------|--------|
+|develop | 11 | 5200 |
+|develop | 7 | 4200 |
+|develop | 9 | 4500 |
+|develop | 8 | 6000 |
+|develop | 10 | 5200 |
+|personnel | 5 | 3500 |
+|personnel | 2 | 3900 |
+|sales | 3 | 4800 |
+|sales | 1 | 5000 |
+|sales | 4 | 4800 |
+
+```sql
+DROP TABLE IF EXISTS salaries;
+CREATE TABLE salaries(
+    depname           Varchar(30),
+    empno     int,
+    salary        int
+);
+
+INSERT INTO salaries VALUES ('develop', 11, 5200);
+INSERT INTO salaries VALUES ('develop', 7, 4200);
+INSERT INTO salaries VALUES ('develop', 9, 4500);
+INSERT INTO salaries VALUES ('develop', 8, 6000);
+INSERT INTO salaries VALUES ('develop', 10, 5200);
+INSERT INTO salaries VALUES ('personnel', 5, 3500);
+INSERT INTO salaries VALUES ('personnel', 2, 3900);
+INSERT INTO salaries VALUES ('sales', 3, 4800);
+INSERT INTO salaries VALUES ('sales', 1, 5000);
+INSERT INTO salaries VALUES ('sales', 4, 4800);
+```
+
+#### Get the ID with the highest value
+
+```sql
+-- solution 1
+With sal_rank as (select empno,
+                         rank() over(order by salary desc) rnk from
+                  salaries)
+select empno from sal_rank where rnk = 1;
+
+-- solution 2
+select empno
+    from salaries
+    order by salary desc
+    limit 1;
+```
+#### Average and rank with a window function (multi-part)
+Write a query that returns the same table, but with a new column that has
+average salary per depname. We would expect a table in the form:
+
+|depname | empno | salary | avg_salary |
+|-----------|-------|--------|------------|
+|develop | 11 | 5200 | 5020 |
+|develop | 7 | 4200 | 5020 |
+|develop | 9 | 4500 | 5020 |
+|develop | 8 | 6000 | 5020 |
+|develop | 10 | 5200 | 5020 |
+|personnel | 5 | 3500 | 3700 |
+|personnel | 2 | 3900 | 3700 |
+|sales | 3 | 4800 | 4867 |
+|sales | 1 | 5000 | 4867 |
+|sales | 4 | 4800 | 4867 |
+
+```sql
+-- solution 1
+SELECT
+*,
+round(AVG(salary) OVER (PARTITION BY depname), 0) avg_salary
+FROM
+salaries;
+
+-- solution 2
+select t1.depname, t1.empno, t1.salary, t2.avg_salary
+    from salaries t1, (select depname, round(avg(salary),0) as avg_salary
+    from salaries 
+    group by depname ) as t2
+    where t1.depname = t2.depname;
+```
+
+#### Adds a column with the rank of each employee based on their salary within their department，where the employee with the highest salary gets the rank of 1
+|depname | empno | salary | salary_rank |
+|-----------|-------|--------|-------------|
+|develop | 8 | 6000 | 1 |
+|develop | 10 | 5200 | 2 |
+|develop | 11 | 5200 | 2 |
+|develop | 9 | 4500 | 4 |
+|develop | 7 | 4200 | 5 |
+|personnel | 2 | 3900 | 1 |
+|personnel | 5 | 3500 | 2 |
+|sales | 1 | 5000 | 1 |
+|sales | 3 | 4800 | 2 |
+|sales | 4 | 4800 | 2 |
+
+
+```sql
+-- solution 1
+select t1.depname, t1.empno, t1.salary,  (case when count(t2.salary) != 0 then count(t2.salary) + 1
+                                              else 1
+                                          end) as salary_rank from salaries t1 full join salaries t2
+     on t1.salary < t2.salary and t1.depname = t2.depname
+     group by t1.depname, t1.empno, t1.salary order by t1.depname,t1.salary desc;
+-- solution 2
+
+select *,
+        rank() over (partition by depname order by salary desc) salary_rank
+        from salaries;
+```
+### Histograms
+**Context:** Say we have a table sessions where each row is a video streaming session with length in seconds:
+
