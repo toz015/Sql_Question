@@ -18,8 +18,12 @@
   - [Average and rank with a window function (multi-part)](#Average-and-rank-with-a-window-function-multi-part)
   - [Adds a column with the rank of each employee based on their salary within their department，where the employee with the highest salary gets the rank of 1](#Adds-a-column-with-the-rank-of-each-employee-based-on-their-salary-within-their-department-where-the-employee-with-the-highest-salary-gets-the-rank-of-1)
 - [Histograms](#Histograms)
-    
-
+  -[Buckets and range set](#Buckets-and-range-set)
+- [Cross Join](#Cross join)
+  - [Write a query to get the pairs of states with total streaming amounts within 1000 of each other](#Write-a-query-to-get-the-pairs-of-states-with-total-streaming-amounts-within-1000-of-each-other)
+  - [Follow up pairs question](#Follow-up-pairs-question)
+- [Advancing Counting](#Advancing Counting)
+  - [Write a query to count the number of users in each class](#Write-a-query-to-count-the-number-of-users-in-each-class)
 <!-- /MarkdownTOC -->
 
 ### Active User 
@@ -399,4 +403,150 @@ select *,
 ```
 ### Histograms
 **Context:** Say we have a table sessions where each row is a video streaming session with length in seconds:
+| session_id | length_seconds |
+|------------|----------------|
+| 1 | 23 |
+| 2 | 453 |
+| 3 | 27 |
+| .. | .. |
+
+#### Buckets and range set
+Write a query to count the number of sessions that fall into bands of size 5, i.e for the above snippet, produce something akin to
+| bucket | count |
+|---------|-------|
+| 20-25 | 2 |
+| 450-455 | 1 |
+```sql
+-- solution 1
+
+SELECT COUNT(*) AS cnt,
+       FLOOR(length_seconds/5) AS prange,
+       CONCAT(5*FLOOR(length_seconds/5), '-', 5*FLOOR(length_seconds/5)+4) AS rstr
+FROM sessions
+GROUP BY prange order by prange;
+
+-- solution 2
+WITH cte AS (SELECT
+            session_id,
+            FLOOR(length_seconds/5) as bin_label 
+            FROM sessions
+)
+SELECT
+    CONCAT(bin_label*5, '-', bin_label*5+4) bucket,
+    COUNT(DISTINCT session_id) count from cte
+    GROUP BY
+    bucket
+    ORDER BY
+    bucket ASC;
+```
+
+### Cross Join
+**Context:** Say we have a table state_streams where each row is a state and the total number of hours of streaming from a video hosting service:
+| state | total_streams |
+|-------|---------------|
+| NC | 34569 |
+| SC | 33999 |
+| CA | 98324 || MA | 19345 |
+| .. | .. |
+
+#### Write a query to get the pairs of states with total streaming amounts within 1000 of each other
+
+For the snippet above, we would want to see something like:
+| state_a | state_b |
+|---------|---------|
+| NC | SC |
+| SC | NC |
+
+```sql
+-- solution
+SELECT a.state as state_a,
+       b.state as state_b
+       From state_stream a,
+            state_stream b
+       where a.state <> b.state
+       and abs(a.total_streams - b.total_streams) < 1000;
+       
+```
+#### Follow up pairs question
+**Task**: How could you modify the SQL from the solution to Part 1 of this question so that duplicates are removed? For example, if we used the sample table from Part 1, the pair NC and SC should only appear in one row instead of two
+```sql
+-- solution
+SELECT a.state as state_a,
+       b.state as state_b
+       From state_stream a,
+            state_stream b
+       where a.state > b.state
+       and abs(a.total_streams - b.total_streams) < 1000;
+```
+
+### Advancing Counting
+**Context:** Say I have a table table in the following form, where a user can be mapped to multiple values of class:
+| user | class |
+|------|-------|
+| 1 | a |
+| 1 | b |
+| 1 | b |
+| 2 | b |
+| 3 | a |
+#### Write a query to count the number of users in each class
+Any user who has label a and b getssorted into b, any user with just a gets sorted into a and any user with just b gets into b
+For table that would result in the following table:
+| class | count |
+|-------|-------|
+| a | 1 |
+| b | 2 |
+
+```sql
+-- solution 1
+SELECT
+  'a' as class,
+  COUNT(DISTINCT user_id) - (SELECT COUNT(DISTINCT user_id) FROM classes WHERE class = 'b') count
+  from classes
+UNION
+SELECT
+  'b' as class,
+  (SELECT COUNT(DISTINCT user_id) FROM classes WHERE class = 'b') count
+  from classes
+  order by class asc;
+
+-- solution 2
+
+with cte as (
+    SELECT
+         user_id,
+         SUM(CASE WHEN class = 'b' THEN 1 ELSE 0 END) as num_b
+         FROM
+             classes
+        group by user_id),
+    user_label as(
+           select user_id,
+           case when num_b > 0 then 'b' else 'a' 
+        end as class
+        from cte)
+select class,
+       count( distinct user_id) as count
+       from user_label 
+    group by class
+    order by class ASC;
+    
+-- solution 3 base on b > a 
+WITH max_class AS (
+    SELECT
+    user_id,
+    MAX(class) as class
+    FROM classes
+    GROUP BY
+    user_id
+)
+SELECT
+    class,
+    COUNT(user_id)
+    FROM
+        max_class
+    GROUP BY
+    class
+    order by class ASC;
+        
+                  
+```
 
