@@ -19,10 +19,10 @@
   - [Adds a column with the rank of each employee based on their salary within their department，where the employee with the highest salary gets the rank of 1](#Adds-a-column-with-the-rank-of-each-employee-based-on-their-salary-within-their-department-where-the-employee-with-the-highest-salary-gets-the-rank-of-1)
 - [Histograms](#Histograms)
   -[Buckets and range set](#Buckets-and-range-set)
-- [Cross Join](#Cross join)
+- [Cross Join](#Cross-join)
   - [Write a query to get the pairs of states with total streaming amounts within 1000 of each other](#Write-a-query-to-get-the-pairs-of-states-with-total-streaming-amounts-within-1000-of-each-other)
   - [Follow up pairs question](#Follow-up-pairs-question)
-- [Advancing Counting](#Advancing Counting)
+- [Advancing Counting](#Advancing-Counting)
   - [Write a query to count the number of users in each class](#Write-a-query-to-count-the-number-of-users-in-each-class)
 <!-- /MarkdownTOC -->
 
