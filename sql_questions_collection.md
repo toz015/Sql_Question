@@ -24,6 +24,15 @@
   - [Follow up pairs question](#Follow-up-pairs-question)
 - [Advancing Counting](#Advancing-Counting)
   - [Write a query to count the number of users in each class](#Write-a-query-to-count-the-number-of-users-in-each-class)
+
+- [GG play](#GG-play)
+  - [Count number of transactions in 2017](#Count-number-of-transaction-in-2017)
+  - [Count number of transactions smaller than 5 and number of transactions larger than 5](#Count-number-of-transactions-smaller-than-5-and-number-of-transactions-larger-than-5)
+  - [Find % of transactions <=$5, and >$5, so should return 33%, 67%  (so query should return ⅓, ⅔)](#Find percentage of transactions smaller than 5 and larger than 5)
+  - [Find the days of which total order value larger than 100](#Find the days of which total order value larger than 100)
+  - [Top 10 orders of each day by order value, data in 2019](#Top 10 orders of each day by order value data in 2019)
+  
+
 <!-- /MarkdownTOC -->
 
 ### Active User 
@@ -549,4 +558,70 @@ SELECT
         
                   
 ```
+##GG play
 
+Table: order
+|order_time |order_value |
+|-------|-------|
+| 2/1/19 |  $6  |
+| 3/5/19 |  $10 | 
+| 4/3/18 |  $4  |
+
+
+###Count number of transaction in 2017
+```sql
+SELECT COUNT(*) AS numTransaction
+  FROM order
+  WHERE year(order_time) = '2017';
+```
+###Count number of transactions smaller than 5 and number of transactions larger than 5
+
+```sql
+
+SELECT 
+    SUM(CASE WHEN order_value <=5 THEN 1 ELSE 0) AS small_tran,
+    SUM(CASE WHEN order_value > 5 THEN 1 ELSE 0) AS large_tran
+FROM order;
+ ```
+
+###Find percentage of transactions smaller than 5 and larger than 5
+
+```
+SELECT 
+    SUM(CASE WHEN order_value <=5 THEN 1 ELSE 0)/COUNT(*) AS small_tran_percent,
+    SUM(CASE WHEN order_value > 5 THEN 1 ELSE 0)/COUNT(*) AS large_tran_percent
+FROM order;
+       
+```
+
+###Find the days of which total order value larger than 100
+```
+SELECT
+    order_time, total_value
+FROM (
+SELECT
+    order_time, sum(order_value) AS total_value
+  FROM order 
+  GROUP BY 
+    order_time) AS tb1
+WHERE 
+  total_value > 100
+
+```
+###Top 10 orders of each day by order value data in 2019
+
+```
+SELECT 
+    order_time, order_value
+FROM
+(
+SELECT
+  order_time,
+  order_value,
+  RANK()OVER(PARTITION BY order_time ORDER BY order_value DESC) AS rank
+FROM 
+  order
+  ) AS tb1
+WHERE rank <= 10;
+
+```
