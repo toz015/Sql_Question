@@ -27,9 +27,9 @@
 - [GG play](#GG-play)
   - [Count number of transactions in 2017](#Count-number-of-transaction-in-2017)
   - [Count number of transactions smaller than 5 and number of transactions larger than 5](#Count-number-of-transactions-smaller-than-5-and-number-of-transactions-larger-than-5)
-  - [Find % of transactions <=$5, and >$5, so should return 33%, 67%  (so query should return ⅓, ⅔)](#Find percentage of transactions smaller than 5 and larger than 5)
-  - [Find the days of which total order value larger than 100](#Find the days of which total order value larger than 100)
-  - [Top 10 orders of each day by order value, data in 2019](#Top 10 orders of each day by order value data in 2019)
+  - [Find % of transactions <=$5, and >$5, so should return 33%, 67%  (so query should return ⅓, ⅔)](#Find-percentage-of-transactions-smaller-than-5-and-larger-than-5)
+  - [Find the days of which total order value larger than 100](#Find-the-days-of-which-total-order-value-larger-than-100)
+  - [Top 10 orders of each day by order value, data in 2019](#Top-10-orders-of-each-day-by-order-value-data-in-2019)
   
 
 <!-- /MarkdownTOC -->
@@ -584,7 +584,7 @@ SELECT
 FROM order;
  ```
 
-####Find percentage of transactions smaller than 5 and larger than 5
+#### Find percentage of transactions smaller than 5 and larger than 5
 
 ```
 SELECT 
