@@ -31,14 +31,14 @@
   - [Find the days of which total order value larger than 100](#Find-the-days-of-which-total-order-value-larger-than-100)
   - [Top 10 orders of each day by order value, data in 2019](#Top-10-orders-of-each-day-by-order-value-data-in-2019)
  
- - [FB Q](#FB-Q)
-  - [Total Revenue and Payer](#Q1-Create-a-table-to-display-total-revenue-and-number-of-buyers-on-each-day)
-  - [Top Payers](#Q2-Create-a-table-to-display-the-top-one-payer-on-each-day)
-  - [A distribution of number days active within a week](#Q3-A-distribution-of-number-days-active-within-a-week)
-  - [Active but not payers](#Q4-Create-a-table-to-display-people-who-were-active-but-did-not-pay-on-each-day)
-  - [Percentage of member spend](#Q5-Create-a-version-of-the-payment-table-that-shows-what-percentage-of-each-member-total-spend-was-paid-on-that-date)
-  - [Spend by status by day](#Q6-Create-a-table-to-show-the-total-payment-from-High-and-Low-spend-segment-members-by-day)
-  
+- [FB Q](#FB-Q)
+	- [Total Revenue and Payer](#Q1-Create-a-table-to-display-total-revenue-and-number-of-buyers-on-each-day)
+	- [Top Payers](#Q2-Create-a-table-to-display-the-top-one-payer-on-each-day)
+	- [A distribution of number days active within a week](#Q3-A-distribution-of-number-days-active-within-a-week)
+	- [Active but not payers](#Q4-Create-a-table-to-display-people-who-were-active-but-did-not-pay-on-each-day)
+	- [Percentage of member spend](#Q5-Create-a-version-of-the-payment-table-that-shows-what-percentage-of-each-member-total-spend-was-paid-on-that-date)
+	- [Spend by status by day](#Q6-Create-a-table-to-show-the-total-payment-from-High-and-Low-spend-segment-members-by-day)
+
 
 <!-- /MarkdownTOC -->
 
