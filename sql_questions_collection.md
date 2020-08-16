@@ -24,7 +24,6 @@
   - [Follow up pairs question](#Follow-up-pairs-question)
 - [Advancing Counting](#Advancing-Counting)
   - [Write a query to count the number of users in each class](#Write-a-query-to-count-the-number-of-users-in-each-class)
-
 - [GG play](#GG-play)
   - [Count number of transactions in 2017](#Count-number-of-transaction-in-2017)
   - [Count number of transactions smaller than 5 and number of transactions larger than 5](#Count-number-of-transactions-smaller-than-5-and-number-of-transactions-larger-than-5)
@@ -558,7 +557,8 @@ SELECT
         
                   
 ```
-##GG play
+
+### GG play
 
 Table: order
 |order_time |order_value |
@@ -568,13 +568,13 @@ Table: order
 | 4/3/18 |  $4  |
 
 
-###Count number of transaction in 2017
+#### Count number of transaction in 2017
 ```sql
 SELECT COUNT(*) AS numTransaction
   FROM order
   WHERE year(order_time) = '2017';
 ```
-###Count number of transactions smaller than 5 and number of transactions larger than 5
+#### Count number of transactions smaller than 5 and number of transactions larger than 5
 
 ```sql
 
@@ -584,7 +584,7 @@ SELECT
 FROM order;
  ```
 
-###Find percentage of transactions smaller than 5 and larger than 5
+####Find percentage of transactions smaller than 5 and larger than 5
 
 ```
 SELECT 
@@ -594,7 +594,7 @@ FROM order;
        
 ```
 
-###Find the days of which total order value larger than 100
+#### Find the days of which total order value larger than 100
 ```
 SELECT
     order_time, total_value
@@ -608,7 +608,7 @@ WHERE
   total_value > 100
 
 ```
-###Top 10 orders of each day by order value data in 2019
+#### Top 10 orders of each day by order value data in 2019
 
 ```
 SELECT 
