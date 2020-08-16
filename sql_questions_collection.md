@@ -586,7 +586,7 @@ FROM order;
 
 #### Find percentage of transactions smaller than 5 and larger than 5
 
-```
+```sql
 SELECT 
     SUM(CASE WHEN order_value <=5 THEN 1 ELSE 0)/COUNT(*) AS small_tran_percent,
     SUM(CASE WHEN order_value > 5 THEN 1 ELSE 0)/COUNT(*) AS large_tran_percent
@@ -595,7 +595,7 @@ FROM order;
 ```
 
 #### Find the days of which total order value larger than 100
-```
+```sql
 SELECT
     order_time, total_value
 FROM (
@@ -610,7 +610,7 @@ WHERE
 ```
 #### Top 10 orders of each day by order value data in 2019
 
-```
+```sql
 SELECT 
     order_time, order_value
 FROM
