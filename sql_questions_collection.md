@@ -30,6 +30,14 @@
   - [Find % of transactions <=$5, and >$5, so should return 33%, 67%  (so query should return ⅓, ⅔)](#Find-percentage-of-transactions-smaller-than-5-and-larger-than-5)
   - [Find the days of which total order value larger than 100](#Find-the-days-of-which-total-order-value-larger-than-100)
   - [Top 10 orders of each day by order value, data in 2019](#Top-10-orders-of-each-day-by-order-value-data-in-2019)
+ 
+ - [FB Q](#FB-Q)
+  - [Total Revenue and Payer](#Q1-Create-a-table-to-display-total-revenue-and-number-of-buyers-on-each-day)
+  - [Top Payers](#Q2-Create-a-table-to-display-the-top-one-payer-on-each-day)
+  - [A distribution of number days active within a week](#Q3-A-distribution-of-number-days-active-within-a-week)
+  - [Active but not payers](#Q4-Create-a-table-to-display-people-who-were-active-but-did-not-pay-on-each-day)
+  - [Percentage of member spend](#Q5-Create-a-version-of-the-payment-table-that-shows-what-percentage-of-each-member-total-spend-was-paid-on-that-date)
+  - [Spend by status by day](#Q6-Create-a-table-to-show-the-total-payment-from-High-and-Low-spend-segment-members-by-day)
   
 
 <!-- /MarkdownTOC -->
@@ -625,3 +633,156 @@ FROM
 WHERE rank <= 10;
 
 ```
+
+### FB Questions
+**Tables:**
+Payment Table: This table contains all the payment amounts on a date and member level. A sample of data looks like this:
+|Date |memberID |Amount|
+|-----|---------|------|
+| 1/3 | A |  $33.9 |
+| 1/4 | C |  $19.3 |
+| 1/7 | A |  $29.1 |
+
+Visitor Table: This table contains all the site visit records on a date and member level. There is row for each member who visited the linkedin.com site on each day. A sample of data looks like this:
+|Date | memberID|
+|-----|---------|
+|1/1 | A |
+|1/3 | A |
+|1/3 | B |
+|1/4 | A |
+|1/4 | C |
+|1/5 | B |
+
+Date Table: this table contains a row for each date:
+|Date|
+|-----|
+|1/1|
+|1/2|
+|1/3|
+|1/4|
+
+Member table: this table contains a row for each member and their “SpendSegment” which will always be either “High” or “Low”
+| MemberID | SpendSegment|
+|----------|-------------|
+| A | High |
+| B | Low  |
+| C | High |
+
+**Schema Tables**
+```sql
+drop table if exists payment cascade;
+drop table if exists visitor;
+drop table if exists datetable;
+drop table if exists membertable;
+
+create table payment("date_" varchar, "member_id" varchar, "amount" numeric);
+create table visitor("date_" varchar, "member_id" varchar);
+create table datetable("date_" varchar);
+create table membertable("member_id" varchar, "spendsegment" varchar);
+
+insert into payment("date_", "member_id", "amount") 
+values 
+('1/3', 'A', 33.9),
+('1/4', 'C', 19.3),
+('1/7', 'A', 29.1);
+
+insert into visitor("date_", "member_id") 
+values 
+('1/1', 'A'),
+('1/3', 'A'),
+('1/3', 'B'),
+('1/4', 'A'),
+('1/4', 'C'),
+('1/5', 'B');
+
+insert into datetable("date_")
+values
+('1/1'),
+('1/2'),
+('1/3'),
+('1/4'),
+('1/5'),
+('1/6'),
+('1/7');
+
+insert into membertable("member_id", "spendsegment")
+values
+('A', 'High'),
+('B', 'Low'),
+('C', 'High');
+```
+
+#### Q1 Create a table to display total revenue and number of buyers on each day
+```sql
+SELECT
+  Date_, ifnull(SUM(Amount), 0) AS total_revenue, COUNT(DISTINCT member_id) AS num_buyers
+FROM datetable d LEFT JOIN Payment p
+ON d.date_ = p.date_
+GROUP BY d.Date_
+
+```
+
+#### Q2 Create a table to display the top one payer on each day
+
+```sql
+
+---TOTAL AMOUNT PAYER
+SELECT 
+  Date_,
+  member_id
+  FROM(
+SELECT 
+  Date_,
+  member_id,
+  RANK() OVER(PARTITION BY member_id, Date_ ORDER BY total_amount DESC) AS rank
+  FROM 
+(SELECT
+  Date_,
+  SUM(Amount) AS total_amount,
+  member_id
+FROM payment
+GROUP BY member_id, Date_) AS tb1
+) AS tb2
+WHERE rank <= 1;
+
+---SINGAL TRANS TOP PAYER
+	
+SELECT Dates, member_id AS memberID
+FROM
+(
+    	SELECT b.date_ AS Dates, member_id,
+    	ROW_NUMBER() OVER (partition by b.date_ order by amount) AS payment_rank
+    	FROM payment a
+    	LEFT JOIN date_ b ON a.date_ = b.date_
+   	 ) AS foo
+WHERE member_id IS NOT NULL AND payment_rank = '1'
+ORDER BY 1;
+```
+
+#### Q3 A distribution of number days active within a week
+Create a table to show how many members are active for 1 day, 2days, 3days,…7days during 1/1-1/7
+
+```sql
+SELECT
+    SUM(CASE WHEN member_id IS NOT NULL THEN 1 ELSE 0 END) AS CNT,
+    member_id
+    FROM(
+
+SELECT 
+  member_id,
+  CAST(SPLIT_PART(d.Date_, '/', 2) AS INT) AS days
+FROM
+  datetable d LEFT JOIN Visitor v
+  ON d.Date_ = v.Date_ ) AS TB1
+  WHERE member_id is not null
+  GROUP BY member_id;
+ 
+```
+#### Q4 Create a table to display people who were active but did not pay on each day
+
+
+
+
+#### Q5 Create a version of the payment table that shows what percentage of each member total spend was paid on that date
+
+#### Q6 Create a table to show the total payment from High and Low spend segment members by day
