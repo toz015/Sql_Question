@@ -780,9 +780,51 @@ FROM
 ```
 #### Q4 Create a table to display people who were active but did not pay on each day
 
+```sql
+    
+SELECT a.date_, a.member_id
+FROM visitor a
+LEFT JOIN payment b ON a.date_ = b.date_  AND  a.member_id=b.member_id
+WHERE amount IS NULL;
 
+```
 
 
 #### Q5 Create a version of the payment table that shows what percentage of each member total spend was paid on that date
 
+```sql
+
+WITH CTE AS
+    (
+     SELECT 
+          SUM(amount) AS total_amount,
+          member_id
+      FROM payment
+        GROUP BY member_id)
+SELECT
+    CONCAT(ROUND(amount/total_amount, 1)*100, '%') as percentage,
+    p.date_,
+    p.member_id
+    FROM 
+        payment p LEFT JOIN CTE
+        ON p.member_id = CTE.member_id
+        GROUP BY 1, 2, 3
+        ORDER BY p.date_;
+	
+```
 #### Q6 Create a table to show the total payment from High and Low spend segment members by day
+
+```sql
+SELECT Dates,
+SUM( CASE WHEN spendsegment = 'High' THEN amount ELSE 0 END) AS total_spend_high,
+SUM(CASE WHEN spendsegment = 'Low' THEN amount ELSE 0 END) AS total_spend_low
+FROM 
+(
+   	 SELECT c.date_ as Dates, COALESCE(amount, 0) AS amount, spendsegment
+    	FROM payment a
+    	RIGHT JOIN membertable b ON a.member_id = b.member_id
+    	RIGHT JOIN datetable c ON a.date_ = c.date_
+   	 ) AS foo
+GROUP BY Dates;
+
+```
