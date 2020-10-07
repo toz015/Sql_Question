@@ -131,7 +131,7 @@ Check the below input data and expected output to prepare the report on bank acc
 
 EXPECTED Output:
 |TransactionDate | AccName |    Type Amount |          AccountBalance |
-| --------------- | ---------- | ---- | --------------------- | --------------- |
+|---------------|----------|---- |---------------------|---------------|
 |2017-01-01   |   Anvesh    |  CR  | 60000.00       |       60000.00 |
 |2017-02-01   |   Anvesh    |  DB  | 8000.00        |      52000.00 |
 |2017-03-01   |   Anvesh    |  CR  | 8000.00        |       60000.00 |
@@ -184,5 +184,54 @@ SELECT c2.TransactionDate,
 
 Check the below input data and expected output to place NULL for repeating values.
 
+Expected Output:
+
+|A |          B        |   C        |   Code |
+|-----------|-----------|-----------|----|
+|1 |           1 |   |     1  |         A |
+| NULL |        NULL  |      2    |       NULL |
+| NULL   |     NULL   |     3     |      NULL |
+| NULL   |     NULL   |     4     |      NULL |
+| 2      |     2      |     1     |      C |
+| NULL   |     NULL   |     2     |      NULL |
+|NULL   |     NULL    |    3      |     NULL |
+
+```sql
+CREATE TABLE Code
+(
+	A int
+	,B Int
+	,C int
+	,Code CHAR(1) 	
+);
+ 
+INSERT INTO Code
+VALUES
+(1,1,1,'A')
+,(1,1,2,'A')
+,(1,1,3,'A')
+,(1,1,4,'A')
+,(2,2,1,'C')
+,(2,2,2,'C')
+,(2,2,3,'C');
+```
 
 
+```sql
+---sol
+WITH CTE AS(
+SELECT A,
+    B,
+    C,
+    Code,
+    row_number() over(partition by A, B, CODE ORDER BY A) AS rnk
+    FROM Code)
+SELECT
+	CASE WHEN rnk = 1 THEN A ELSE NULL END AS A
+	,case when rnk = 1 then B ELSE NULL end AS B
+    ,C
+	,case when rnk = 1 then Code else NULL end AS Code
+from CTE
+```
+
+https://www.dbrnd.com/2019/05/sql-puzzle-sql-advance-query-report-on-manager-employee-nth-level-hierarchy/
