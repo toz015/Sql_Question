@@ -1,7 +1,12 @@
+## SQL PUZZLE
+reference link:
+https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-advance-sql-queries/
+
 <!-- MarkdownTOC -->
 - [Find the Order basis on thier Status and Step](#Find-the-Order-basis-on-thier-Status-and-Step)
 - [Generate the range of data basis on common combination](#Generate-the-range-of-data-basis-on-common-combination)
 - [To generate the account balance column for Bank Accounts](#To-generate-the-account-balance-column-for-Bank-Accounts)
+- [Place NULL for repeating values](#Place-NULL-for-repeating-values)
 
 <!-- MarkdownTOC -->
 
@@ -51,9 +56,6 @@ WHERE
 tb2.Step == 0 AND Status = 'P'
 
 )
-
-
-
 
 ---sol2
 
@@ -125,9 +127,62 @@ WHERE c1.rank = 1 and c2.rank = 1 and c1.sendflag = c2.sendflag and c1.receivefl
 ```
 
 ### To generate the account balance column for Bank Accounts
+Check the below input data and expected output to prepare the report on bank account transaction like generate the data of AccountBalance column where for CR plus the transaction value and for DR minus the transaction value
 
+EXPECTED Output:
+|TransactionDate | AccName |    Type Amount |          AccountBalance |
+| --------------- | ---------- | ---- | --------------------- | --------------- |
+|2017-01-01   |   Anvesh    |  CR  | 60000.00       |       60000.00 |
+|2017-02-01   |   Anvesh    |  DB  | 8000.00        |      52000.00 |
+|2017-03-01   |   Anvesh    |  CR  | 8000.00        |       60000.00 |
+|2017-04-01   |   Anvesh    |  DB  | 5000.00        |       55000.00 |
+|2017-01-01   |   Nupur     |  CR  | 10000.00       |       10000.00 |
+|2017-02-02   |   Nupur     |  CR  | 8000.00        |       18000.00 |
+|2017-03-03   |   Nupur     |  DB  | 8000.00        |       10000.00 |
 
 ```sql
+DROP TABLE IF EXISTS AccountBalance;
 
+CREATE TABLE AccountBalance
+(
+	TransactionDate DATE
+	,AccName VARCHAR(10)
+	,Type VARCHAR(2)
+	,Amount MONEY
+);
+ 
+INSERT INTO AccountBalance
+VALUES
+('2017-01-01','Anvesh','CR','60000')
+,('2017-02-01','Anvesh','DB','8000')
+,('2017-03-01','Anvesh','CR','8000')
+,('2017-04-01','Anvesh','DB','5000')
+,('2017-01-01','Nupur','CR','10000')
+,('2017-02-02','Nupur','CR','8000')
+,('2017-03-03','Nupur','DB','8000');
 ```
+
+```sql
+---sol1
+WITH CTE AS(
+SELECT 
+    TransactionDate,
+    AccName,
+    Type,
+    (CASE WHEN Type = 'CR' THEN Amount ELSE -1 * Amount END ) AS Amount
+    FROM AccountBalance)
+SELECT c2.TransactionDate,
+        c2.AccName,
+       (select SUM(c1.amount)
+        FROM CTE c1
+        WHERE c1.TransactionDate <= c2.TransactionDate and c1.AccName = c2.AccName) AS AccountBalance
+        FROM CTE c2;
+	
+```
+
+### Place NULL for repeating values
+
+Check the below input data and expected output to place NULL for repeating values.
+
+
 
