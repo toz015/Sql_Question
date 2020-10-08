@@ -9,6 +9,8 @@ https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-adva
 - [Place NULL for repeating values](#Place-NULL-for-repeating-values)
 - [Recursive CTE](#Get-organisational-level-hierarchy-from-one-table)
 - [Replace NULL with Previous Non Null value](#Replace-NULL-with-Previous-Non-Null-value)
+- [Generate the data in the RANGE format](#Generate-the-data-in-the-RANGE-format)
+
 
 <!-- MarkdownTOC -->
 
@@ -355,6 +357,7 @@ VALUES
 ```
 
 ```sql
+---sol
 WITH CTE AS (
 	SELECT 
 		*,
@@ -370,6 +373,51 @@ SELECT
 FROM CTE c;
 ```
 
+### Generate the data in the RANGE format
+Check the below input data and expected output to start the range from 0 to first value and the first value to second value so on.
+
+Expected Output:
+
+|LowerRange | UpperRange |
+|-----------|-----------|
+| 0  |         108 |
+| 108  |       116 |
+| 116  |       226 | 
+| 226  |       308 |
+| 308  |       416 |
+| 416  |       426 |
+| 426  |       NULL |
+
+```sql
+DROP TABLE IF EXISTS Ranges;
+
+CREATE TABLE Ranges
+(Val INT);
+ 
+INSERT INTO Ranges(Val) 
+VALUES 
+(108),(116),
+(226),(308),
+(416),(426);
+
+
+```
+
+
+```sql
+---sol
+
+WITH CTE AS(
+SELECT 
+    Val,
+    row_number() over() AS rnk FROM
+    (select 0 Val union select Val from Ranges) AS T)
+
+SELECT 
+    Val AS LowerRange,
+    (SELECT b.Val FROM CTE a, CTE b WHERE a.rnk + 1 = b.rnk AND a.rnk = c.rnk) AS UpperRange
+    FROM CTE C;
+```
 
 
 
