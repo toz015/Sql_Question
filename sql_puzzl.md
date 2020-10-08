@@ -7,6 +7,8 @@ https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-adva
 - [Generate the range of data basis on common combination](#Generate-the-range-of-data-basis-on-common-combination)
 - [To generate the account balance column for Bank Accounts](#To-generate-the-account-balance-column-for-Bank-Accounts)
 - [Place NULL for repeating values](#Place-NULL-for-repeating-values)
+- [Recursive CTE](#Get-organisational-level-hierarchy-from-one-table)
+- [Replace NULL with Previous Non Null value](#Replace-NULL-with-Previous-Non-Null-value)
 
 <!-- MarkdownTOC -->
 
@@ -234,4 +236,142 @@ SELECT
 from CTE
 ```
 
-https://www.dbrnd.com/2019/05/sql-puzzle-sql-advance-query-report-on-manager-employee-nth-level-hierarchy/
+### Get organisational level hierarchy from one table
+
+Check the below input data and expected output to prepare the report on Manager -> Employee Nth level hierarchy basis on the ManagerID column.
+
+Expected Output:
+|empname	|managername	|level |
+|--------------|-------------|-----------|
+| Anvesh | NULL |	1 |
+| Neevan | NULL |	1 |
+| Mukesh | Anvesh | 2 |
+| Rajesh | Mukesh | 3 |
+| Nupur  | Neevan | 2 |
+| Roy | Nupur | 3 |
+| Martin | Roy | 4 |
+| Manish | Anvesh	 | 2 |
+| Eric | Neevan	 | 2 |
+| Purv | Eric |	3 |
+
+```sql
+DROP TABLE IF EXISTS Employee;
+CREATE TABLE Employee
+(
+	EmpID INT
+	,EmpName VARCHAR(10)
+	,ManagerID INT
+);
+ 
+INSERT INTO Employee 
+VALUES
+(1,'Anvesh',NULL)
+,(2,'Neevan',NULL)
+,(3,'Mukesh',1)
+,(4,'Rajesh',3)
+,(5,'Nupur',2)
+,(6,'Roy',5)
+,(7,'Martin',6)
+,(8,'Manish',1)
+,(9,'Eric',2)
+,(10,'Purv',9);
+
+```
+
+```sql
+
+---sol
+
+WITH RECURSIVE RCTE AS
+( 
+    SELECT 
+     EmpID AS BaseEmpID, 
+     ManagerID AS BaseManagerID,
+     1 AS Lvl, 
+     EmpID, 
+     ManagerID
+    FROM employee
+
+    UNION ALL
+
+    SELECT 
+     c.BaseEmpID,
+     c.BaseManagerID,
+     Lvl + 1,
+     m.EmpID,
+     m.ManagerID
+    FROM RCTE c
+    JOIN employee m 
+      ON m.EmpID = c.ManagerID
+)
+, EMPLEVELS AS
+(
+    SELECT 
+     BaseEmpID, 
+     BaseManagerID, 
+     MAX(Lvl) AS Level
+    FROM RCTE
+    GROUP BY BaseEmpID, BaseManagerID
+)
+SELECT 
+ e.EmpName, 
+ m.EmpName AS ManagerName,
+ elvl.Level
+FROM EMPLEVELS elvl
+JOIN employee e ON e.EmpID = elvl.BaseEmpID
+LEFT JOIN employee m ON m.EmpID = elvl.BaseManagerID
+ORDER BY elvl.BaseEmpID;
+
+```
+### Replace NULL with Previous Non Null value
+
+Check the below input data and expected output to replace the NULL value with the previous NON-Null value.
+
+Expected Output:
+
+| Id |          Code | Previous_NonNullCode |
+|-----------|----|--------------------|
+|1 | ABC | ABC |
+|2 | XYZ | XYZ |
+|3 | NULL | XYZ |
+|4 | NULL | XYZ |
+|5 | PQR  | PQR |
+|6 | NULL | PQR |
+|7 | ERT | ERT |
+|8 | NULL | ERT |
+```sql
+DROP TABLE IF EXISTS tbl_Values;
+CREATE TABLE tbl_Values
+(
+   Id INT
+  ,Code VARCHAR(3)
+);
+ 
+INSERT INTO tbl_Values 
+VALUES
+(1,'ABC'),(2,'XYZ'),(3,NULL),(4,NULL)
+,(5,'PQR'),(6,NULL),(7,'ERT'),(8,NULL);
+
+```
+
+```sql
+WITH CTE AS (
+	SELECT 
+		*,
+		row_number() OVER(ORDER BY ID) AS rnk
+	FROM tbl_Values
+		)
+SELECT
+	Id,
+	Code,
+	(SELECT Code FROM CTE a WHERE a.rnk = 
+		(SELECT MAX(b.rnk) FROM CTE b WHERE b.rnk <= c.rnk AND b.Code IS NOT NULL))
+		AS Previous_NonNullCode 
+FROM CTE c;
+```
+
+
+
+
+
+
