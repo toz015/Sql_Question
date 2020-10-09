@@ -10,7 +10,10 @@ https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-adva
 - [Recursive CTE](#Get-organisational-level-hierarchy-from-one-table)
 - [Replace NULL with Previous Non Null value](#Replace-NULL-with-Previous-Non-Null-value)
 - [Generate the data in the RANGE format](#Generate-the-data-in-the-RANGE-format)
-
+- [Do basic validation of Email Address](#Do-basic-validation-of-Email-Address)
+- [Do the Multiplication for each Group](#Do-the-Multiplication-for-each-Group)
+- [Get the Last Sunday of Previous Week](#Get-the-Last-Sunday-of-Previous-Week)
+- [Check a String Is Number or Not](#Check-a-String-Is-Number-or-Not)
 
 <!-- MarkdownTOC -->
 
@@ -419,7 +422,87 @@ SELECT
     FROM CTE C;
 ```
 
+### Do basic validation of Email Address
+
+Check the below input data and expected output and perform the basic Email Validation using simple LIKE predicate.
+
+```sql
+DROP TABLE IF EXISTS tbl_emails;
+
+CREATE TABLE tbl_emails (emailname VARCHAR(400));
+INSERT INTO tbl_emails VALUES ('abc@gmail.com'),('@gmail.com'),('abcxyz.gmail.com'),('xyz@yahoo.com');
+```
+```sql
+---sol
+SELECT emailname,
+       CASE WHEN emailname LIKE '%_@_%_._%' THEN TRUE ELSE FALSE END IsCorrectEmail
+       FROM tbl_emails;
+```
+
+### Do the Multiplication for each Group
+Check the below input data and expected output to get the multiplication for each Group
+
+Expexted Outpu:
+
+|GroupName | GroupValue |
+|----------|----------------------|
+|A  |      700              |
+|B  |       1620000       |
+|C  |        12000        |
+|D  |         60000       |    
+
+```sql
+DROP TABLE IF EXISTS  tbl_GroupNumber;
+
+CREATE TABLE tbl_GroupNumber (GroupName VARCHAR(10), GroupValue INT);
+ 
+INSERT INTO tbl_GroupNumber VALUES
+('A',10),('B',15),('C',20),('D',30)
+,('B',30),('C',60),('D',40),('D',50)
+,('A',70),('B',40),('C',10),('B',90);
+```
+```sql
+---sol1
+
+WITH RECURSIVE cte AS 
+(
+    SELECT GroupName, GroupValue AS Multiply, row_number() over (partition by GroupName) as rnk
+    FROM tbl_GroupNumber
+    UNION ALL
+    SELECT ff.GroupName, cte.Multiply * ff.GroupValue as multiply, ff.rnk FROM
+    ( SELECT GroupName, GroupValue, row_number() over (partition by GroupName) as rnk
+    FROM tbl_GroupNumber) ff
+        INNER JOIN cte
+        ON ff.rnk -1= cte.rnk AND ff.GroupName = cte.GroupName
+)
+
+SELECT groupname,
+        MAX(multiply) as GroupValue
+        FROM CTE
+        GROUP BY groupname
+        ORDER BY groupname;
+
+---sol2
+select gn.groupname, round(EXP(SUM(LN(gn.groupvalue))))
+from tbl_GroupNumber gn
+group by gn.groupname;
 
 
+```
 
+
+### Get the Last Sunday of Previous Week
+
+Check the below input date and expected output to find the last Sunday of the previous week in SQL Server.
+
+```sql
+SELECT CURRENT_DATE - case when extract(dow from  current_date) = 0 then 7 * interval '1 DAY' else extract(dow from  current_date)  * interval '1 DAY' end;
+```
+
+### Check a String Is Number or Not
+
+```sql
+select test_data ~ '^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$' ;
+
+```
 
