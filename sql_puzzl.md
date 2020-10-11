@@ -14,6 +14,9 @@ https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-adva
 - [Do the Multiplication for each Group](#Do-the-Multiplication-for-each-Group)
 - [Get the Last Sunday of Previous Week](#Get-the-Last-Sunday-of-Previous-Week)
 - [Check a String Is Number or Not](#Check-a-String-Is-Number-or-Not)
+- [Get the last three Records of a table](#Get-the-last-three-Records-of-a-table)
+- [Find Correlation Coefficients for the Run of Cricket Players](#Find-Correlation-Coefficients-for-the-Run-of-Cricket-Players)
+- [Delete Duplicate Data without Primary key, ROW_NUMBER()](#Delete-Duplicate-Data-without-Primary-key)
 
 <!-- MarkdownTOC -->
 
@@ -506,3 +509,136 @@ select test_data ~ '^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$' ;
 
 ```
 
+### Get the last three Records of a table
+Check the below input data and expected output to get the last three records of a table.
+
+Expected Output:
+
+
+|ID |         Name|
+|-----------|----------|
+|7   |        WER |
+|8  |         CVC |
+|9 |           ASD|
+
+```sql
+Drop Table if exists tbl_TestTable;
+
+
+
+CREATE TABLE tbl_TestTable (ID INT, Name VARCHAR(10));
+ 
+INSERT INTO tbl_TestTable 
+VALUES (1,'ABC'),(2,'XYZ'),(3,'ERZ')
+,(4,'HYU'),(5,'BNM'),(6,'WER')
+,(7,'WER'),(8,'CVC'),(9,'ASD');
+
+```
+```sql
+---sol
+SELECT ID,
+        Name 
+        FROM tbl_TestTable
+        WHERE ID + 3 > (SELECT MAX(ID) FROM tbl_TestTable);
+```
+
+### Find Correlation Coefficients for the Run of Cricket Players
+
+Check the below input data and expected output to find the Correlation Coefficients for the run of Cricket Players.
+
+Expected Output:
+
+
+|Player1 |    Player2 |   PlayersCoefficientRuns |
+|----------|----------|----------------------|
+|Dhoni |     Kohli   |   0.332662790481163 |
+|Dhoni  |    Yuvraj   |  -0.311842111156846 |
+|Kohli |     Yuvraj   |  -0.915321318268559 |
+
+```sql
+CREATE TABLE tbl_Players (PlayerName VARCHAR(10), Runs INT, MatchYear INT);
+ 
+INSERT INTO tbl_Players VALUES 
+('Dhoni',1200, 2014),('Kohli',1800, 2014),('Yuvraj',1000, 2014)
+,('Dhoni',1300, 2015),('Kohli',1500, 2015),('Yuvraj',900, 2015)
+,('Dhoni',1100, 2016),('Kohli',1300, 2016),('Yuvraj',1200, 2016)
+,('Dhoni',1800, 2017),('Kohli',1100, 2017),('Yuvraj',1300, 2017)
+,('Dhoni',2000, 2018),('Kohli',2200, 2018),('Yuvraj',700, 2018);
+
+```
+```sql
+---sol1
+
+
+WITH CTE AS (SELECT a.PlayerName as player1,
+       b.PlayerName as player2,
+       a.Runs as player1_run,
+       b.Runs as player2_run
+       FROM tbl_Players a, tbl_Players b
+       WHERE a.PlayerName > b.PlayerName
+       AND a.MatchYear = b.MatchYear),
+CTE2 AS(SELECT 
+           player1,
+           player2,
+           COUNT(*) AS num,
+           SUM(player1_run) AS player1_sum,
+           SUM(player2_run) AS player2_sum,
+           SUM(player1_run * player2_run) AS total_sum,
+           SUM(player1_run * player1_run) AS player1_2,
+           SUM(player2_run * player2_run) AS player2_2
+           FROM CTE GROUP BY player1, player2)
+SELECT player1,
+       player2,
+       (num * (total_sum) - player1_sum * player2_sum)/ sqrt((num * player1_2 - player1_sum * player1_sum)
+                                                             * (num * player2_2 - player2_sum * player2_sum))
+                                                             AS correlation_coefficient
+       FROM CTE2;
+
+---sol2
+
+select
+	Player1
+	,Player2
+	,
+    Round((Avg(Runs1 * Runs2) - (Avg(Runs1) * Avg(Runs2))) / 
+	(stddev_pop(Runs1) * stddev_pop(Runs2)), 5) as PlayersCoefficientRuns
+from  
+(
+	select 
+		a.PlayerName as Player1
+		,a.Runs as Runs1
+		,b.PlayerName as Player2
+		,b.Runs as Runs2
+		,a.MatchYear 
+	from tbl_Players a
+	cross join tbl_Players b
+	where b.PlayerName>a.PlayerName and a.MatchYear=b.MatchYear
+) as t
+group by Player1, Player2
+```
+
+### Delete Duplicate Data without Primary key
+
+Check the below input data and expected output for deleting the duplicate data by giving an ID. The table doesn’t have any primary key and writes logic without using ROW_NUMBER().
+
+```sql
+
+
+CREATE TABLE tbl_TestTable (ID INT, Name VARCHAR(10));
+ 
+INSERT INTO tbl_TestTable 
+VALUES (1,'ABC'),(1,'ABC'),(3,'ERZ')
+,(4,'HYU'),(5,'BNM'),(1,'ABC')
+,(7,'WER'),(3,'ERZ'),(7,'WER');
+```
+```sql
+--sol
+DELETE FROM  tbl_TestTable
+WHERE id IN
+(
+SELECT ID
+FROM tbl_TestTable
+Group By NAME,id
+HAVING COUNT(id) >1
+)
+```
