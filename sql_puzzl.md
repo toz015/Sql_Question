@@ -17,6 +17,14 @@ https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-adva
 - [Get the last three Records of a table](#Get-the-last-three-Records-of-a-table)
 - [Find Correlation Coefficients for the Run of Cricket Players](#Find-Correlation-Coefficients-for-the-Run-of-Cricket-Players)
 - [Delete Duplicate Data without Primary key, ROW_NUMBER()](#Delete-Duplicate-Data-without-Primary-key)
+- [Generate Calendar Data for 19th Century](#Generate-Calendar-Data-for-19th-Century)
+- [Use Recursive CTE, and list out the Years from Dates](#Use-Recursive-CTE-and-list-out-the-Years-from-Dates)
+- [Calculate the Power of Three](#Calculate-the-Power-of-Three)
+- [Find the Median Value from the Given Number](#Find-the-Median-Value-from-the-Given-Number)
+
+
+
+
 
 <!-- MarkdownTOC -->
 
@@ -641,4 +649,85 @@ FROM tbl_TestTable
 Group By NAME,id
 HAVING COUNT(id) >1
 )
+```
+
+
+### Generate Calendar Data for 19th Century
+
+```sql
+
+WITH recursive calendar AS (
+SELECT to_date('01.01.1900', 'dd.mm.yyyy') as fdate 
+UNION ALL
+SELECT fdate + 1 FROM calendar
+WHERE fdate + 1 <= '12.31.2000'
+)
+SELECT fdate FROM calendar order by fdate desc;
+```
+
+
+### Use Recursive CTE and list out the Years from Dates
+
+```sql
+WITH recursive calendar AS (
+SELECT extract(year from to_date('01.01.2010', 'dd.mm.yyyy') ) as fdate 
+UNION ALL
+SELECT fdate + 1  FROM calendar
+WHERE fdate < extract(year from to_date('01.01.2018', 'dd.mm.yyyy'))
+)
+SELECT fdate FROM calendar order by fdate desc;
+```
+
+### Calculate the Power of Three
+
+Check the below input data and expected output to get the power of three within first 100 numbers.
+
+Expected Output:
+
+|PowerOfThree|
+|------------|
+|1|
+|3|
+|9|
+|27|
+|81|
+
+```sql
+
+WITH RECURSIVE CTE AS (
+Select 0 as pw, 1 AS cnt Union
+Select pw + 1 AS pw, cnt * 3 AS count
+    FROM CTE WHERE
+    pw < 5) 
+SELECT * FROM CTE 
+```
+
+### Find the Median Value from the Given Number
+
+Check the below input data and expected output and find the median value from the given range of Numbers.
+```sql
+CREATE TABLE tbl_TestMedian (Number INT)
+INSERT INTO tbl_TestMedian VALUES (1),(5),(10),(16),(20)
+```
+
+```sql
+---sol1
+SELECT NUMBER 
+    FROM tbl_TestMedian t1
+    WHERE ABS(
+        (SELECT COUNT(*) FROM tbl_TestMedian t2 where t2.Number >= t1.Number ) -
+        (SELECT COUNT(*) FROM tbl_TestMedian t3 where t3.Number <= t1.Number)) <= 1
+
+---sol2
+
+WITH CTE AS (
+    SELECT NUMBER,
+           ROW_NUMBER () OVER(ORDER BY NUMBER) AS rnk,
+            COUNT(*) OVER() AS total
+    FROM tbl_TestMedian)
+
+SELECT NUMBER
+    FROM CTE 
+    WHERE CASE WHEN total & 1 = 1 THEN rnk = (total + 1) / 2
+        ELSE rnk = total / 2 OR rnk = total/ 2 + 1 END
 ```
