@@ -149,7 +149,7 @@ Check the below input data and expected output to prepare the report on bank acc
 
 EXPECTED Output:
 |TransactionDate | AccName |    Type Amount |          AccountBalance |
-|---------------|----------|---- |---------------------|---------------|
+|---------------|----------|----|---------------------|---------------|
 |2017-01-01   |   Anvesh    |  CR  | 60000.00       |       60000.00 |
 |2017-02-01   |   Anvesh    |  DB  | 8000.00        |      52000.00 |
 |2017-03-01   |   Anvesh    |  CR  | 8000.00        |       60000.00 |
