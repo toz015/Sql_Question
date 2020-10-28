@@ -768,8 +768,7 @@ FROM tbl_Products GROUP BY Month_No
 
 
 
-
-###Find the Sum of privious values without using a self join
+### Find the Sum of privious values without using a self join
 
 Expected Output:
 
