@@ -22,7 +22,7 @@ https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-adva
 - [Calculate the Power of Three](#Calculate-the-Power-of-Three)
 - [Find the Median Value from the Given Number](#Find-the-Median-Value-from-the-Given-Number)
 - [Use Group By find MIN MAX unit sold of a Month](#Use-Group-By-find-MIN-MAX-unit-sold-of-a-Month)
-- []
+- [Find the Sum of privious values without using a self join](#Find-the-Sum-of-privious-values-without-using-a-self-join)
 
 
 
@@ -765,3 +765,35 @@ SELECT month_no, min(Total_Unit_Sold) AS Min_Sales,
 max(Total_Unit_Sold) AS Max_Sales
 FROM tbl_Products GROUP BY Month_No
 ```
+
+
+
+
+###Find the Sum of privious values without using a self join
+
+Expected Output:
+
+|ID    |      SumsList |
+|-----------|-----------|
+|1           |1         |
+|2           |3|
+|3           |6|
+|4           |10|
+|5           |15|
+|6           |21|
+|7           |28|
+
+
+```sql
+CREATE TABLE SumOfPrev(ID INT);
+ 
+INSERT INTO SumOfPrev 
+VALUES (1),(2),(3),(4),(5),(6),(7);
+```
+```sql
+--sol
+SELECT
+SUM(ID)OVER(ORDER BY ID) AS sum_prev
+FROM SumOfPrev;
+```
+
