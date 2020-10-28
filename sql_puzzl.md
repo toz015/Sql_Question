@@ -21,6 +21,8 @@ https://www.dbrnd.com/sql-interview-the-ultimate-sql-puzzles-and-sql-server-adva
 - [Use Recursive CTE, and list out the Years from Dates](#Use-Recursive-CTE-and-list-out-the-Years-from-Dates)
 - [Calculate the Power of Three](#Calculate-the-Power-of-Three)
 - [Find the Median Value from the Given Number](#Find-the-Median-Value-from-the-Given-Number)
+- [Use Group By find MIN MAX unit sold of a Month](#Use-Group-By-find-MIN-MAX-unit-sold-of-a-Month)
+- []
 
 
 
@@ -730,4 +732,36 @@ SELECT NUMBER
     FROM CTE 
     WHERE CASE WHEN total & 1 = 1 THEN rnk = (total + 1) / 2
         ELSE rnk = total / 2 OR rnk = total/ 2 + 1 END
+```
+
+
+### Use Group By find MIN MAX unit sold of a Month
+Check the below input data and expected output for finding the MIN & MAX product unit sold of a month.
+
+Expected Output:
+
+
+|Month_No  |  Min_Sales |  Max_Sales|
+|-----------|-----------|-----------|
+|1  |         20      |    70 |
+|2 |           40      |    90 |
+
+```sql
+create table tbl_Products
+(
+  Month_No  int,
+  Product_Name  varchar(20),
+  Total_Unit_Sold int
+);
+ 
+insert into tbl_Products values 
+(1,'computer',20),(1,'mobile',50),(1,'laptop',30)
+,(2,'computer',40),(1,'speaker',70),(2,'mobile',60)
+,(2,'laptop',60),(2,'speaker',90);
+```sql
+```sql
+--sol
+SELECT month_no, min(Total_Unit_Sold) AS Min_Sales,
+max(Total_Unit_Sold) AS Max_Sales
+FROM tbl_Products GROUP BY Month_No
 ```
